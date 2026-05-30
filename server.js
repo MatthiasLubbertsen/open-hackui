@@ -18,6 +18,7 @@ app.post('/webhook', (req, res) => {
     .then(res => res.json())
     .then(data => {
       const apiKey = data.apiKey;
+      console.log('Generated API Key:', apiKey);
     });
 
     fetch('https://chat.matthiaz.dev/api/v1/users/user/settings/', {
