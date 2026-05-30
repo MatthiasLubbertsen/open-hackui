@@ -32,7 +32,7 @@ app.post('/webhook', (req, res) => {
       }
     }).then(res => res.json())
       .then(data => {
-        console.log('User settings:', data.settings);
+        console.log('User settings:', data);
         const oldSettings = data;
       })
       .catch(err => {
