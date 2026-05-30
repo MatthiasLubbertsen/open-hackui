@@ -26,12 +26,12 @@ app.post('/webhook', (req, res) => {
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${adminApiKey}`
-      }.then(res => res.json())
+      }
+    }).then(res => res.json())
       .then(data => {
         console.log('User settings:', data);
         const oldSettings = data;
-      })
-    });
+      });
 
     // fetch('https://chat.matthiaz.dev/api/v1/users/user/settings/update', {
     //   method: 'POST',
