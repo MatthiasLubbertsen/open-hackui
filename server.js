@@ -24,7 +24,7 @@ app.post('/webhook', (req, res) => {
       console.error('Error fetching API key:', err);
     })
 
-    fetch('https://chat.matthiaz.dev/api/v1/users/user/status', {
+    fetch('https://chat.matthiaz.dev/api/v1/users/user/settings', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
