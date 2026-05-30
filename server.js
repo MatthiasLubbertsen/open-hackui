@@ -19,7 +19,10 @@ app.post('/webhook', (req, res) => {
     .then(data => {
       const apiKey = data.apiKey;
       console.log('Generated API Key:', apiKey);
-    });
+    })
+    .catch(err => {
+      console.error('Error fetching API key:', err);
+    })
 
     fetch('https://chat.matthiaz.dev/api/v1/users/user/settings/', {
       method: 'GET',
@@ -31,6 +34,9 @@ app.post('/webhook', (req, res) => {
       .then(data => {
         console.log('User settings:', data);
         const oldSettings = data;
+      })
+      .catch(err => {
+        console.error('Error fetching user settings:', err);
       });
 
     // fetch('https://chat.matthiaz.dev/api/v1/users/user/settings/update', {
