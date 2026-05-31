@@ -1,1 +1,19 @@
-{"ui":{"version":"0.9.5","chatDirection":"auto","landingPageMode":"","chatBubble":true,"models":["openai/gpt-5"],"imageCompressionSize":{"width":"","height":""},"autoFollowUps":false,"collapseCodeBlocks":true,"ctrlEnterToSend":true,"largeTextAsFile":true,"showFormattingToolbar":true,"params":{},"richTextInput":false,"directConnections":{"OPENAI_API_BASE_URLS":["https://ai.hackclub.com/proxy/v1"],"OPENAI_API_KEYS":["sk-hc-v1-242d08086ec744739af02f07s41b4fs24151d8e5174a554a89aaea14d4ec56070a"],"OPENAI_API_CONFIGS":{"0":{"enable":true,"tags":[],"prefix_id":"","model_ids":[],"connection_type":"external","auth_type":"bearer"}}}}}
+{
+  action: 'signup',
+  message: 'New user signed up: log tech',
+  user: '{
+        "id": "db0dd3a6-37dc-4173-8b81-0be3c8eaa1e5",
+        "email": "5wwvh7@hack.af",
+        "role": "user",
+        "name": "log tech",
+        "profile_image_url": "/user.png",
+        "oauth": {
+            "oidc": {
+                "sub": "ident!0Aflbk"
+            }
+        },
+        "last_active_at": 1780233856,
+        "updated_at": 1780233856,
+        "created_at": 1780233856
+    }'
+}

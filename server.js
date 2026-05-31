@@ -10,7 +10,6 @@ const port = 1826;
 const adminApiKey = process.env.ADMIN_API_KEY;
 
 
-
 app.use(express.json());
 
 async function getApiKey(userId) {
@@ -24,13 +23,13 @@ async function getApiKey(userId) {
   }
 }
 
-async function getUserSettings(userId) {
+async function getUserSettings(userId, userToken) {
   try {
     const resp = await fetch(`https://chat.matthiaz.dev/api/v1/users/user/settings`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${adminApiKey}`
+        'Authorization': `Bearer ${userToken}`
       }
     });
     if (!resp.ok) throw new Error(`Status ${resp.status}`);
@@ -41,13 +40,7 @@ async function getUserSettings(userId) {
   }
 }
 
-async function updateUserSettings(userId, settings) {
-  const userToken = jwt.sign(
-    { id: userId },
-    process.env.WEBUI_SECRET_KEY,
-    { expiresIn: '5m' }
-  );
-
+async function updateUserSettings(userId, settings, userToken) {
   try {
     const resp = await fetch(`https://chat.matthiaz.dev/api/v1/users/user/settings/update`, {
       method: 'POST',
@@ -68,11 +61,23 @@ async function updateUserSettings(userId, settings) {
 app.post('/webhook', async (req, res) => {
   console.log('Received webhook:', req.body);
 
+  const user = JSON.parse(req.body.user);
+  const userId = user.id;
+  
+  const userToken = jwt.sign(
+    { id: userId },
+    process.env.WEBUI_SECRET_KEY,
+    { expiresIn: '5m' }
+  );
+
+  console.log('jwt token:', userToken);
+
+
   try {
-    const apiKey = await getApiKey('user');
+    const apiKey = await getApiKey(userId);
     console.log('Fetched API key:', apiKey);
 
-    let userSettings = await getUserSettings('user');
+    let userSettings = await getUserSettings(userId, userToken);
     console.log('Fetched old settings:', userSettings);
 
     userSettings.ui.directConnections.OPENAI_API_BASE_URLS = ["https://ai.hackclub.com/proxy/v1"];
@@ -83,7 +88,7 @@ app.post('/webhook', async (req, res) => {
 
     console.log(JSON.stringify(userSettings));
 
-    const updateResp = await updateUserSettings(req.user.id, userSettings);
+    const updateResp = await updateUserSettings(userId, userSettings, userToken);
     console.log('Updated settings response:', updateResp);
 
     res.status(200).send('Webhook received');
