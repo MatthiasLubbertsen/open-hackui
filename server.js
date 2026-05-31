@@ -41,22 +41,28 @@ async function getOldSettings(userId) {
 
 app.post('/webhook', async (req, res) => {
   console.log('Received webhook:', req.body);
-  res.status(200).send('Webhook received');
 
-  let apiKey = await getApiKey('user');
-  console.log('Fetched API key:', apiKey);
-  let oldSettings = await getOldSettings('user');
-  console.log('Fetched old settings:', oldSettings);
+  try {
+    const apiKey = await getApiKey('user');
+    console.log('Fetched API key:', apiKey);
 
+    const oldSettings = await getOldSettings('user');
+    console.log('Fetched old settings:', oldSettings);
 
-  // fetch('https://chat.matthiaz.dev/api/v1/users/user/settings/update', {
-  //   method: 'POST',
-  //   headers: {
-  //     'Content-Type': 'application/json',
-  //     'Authorization': `Bearer ${adminApiKey}`
-  //   },
-  //   body: JSON.stringify(req.body)
-  // });
+    // fetch('https://chat.matthiaz.dev/api/v1/users/user/settings/update', {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     'Authorization': `Bearer ${adminApiKey}`
+    //   },
+    //   body: JSON.stringify(req.body)
+    // });
+
+    res.status(200).send('Webhook received');
+  } catch (err) {
+    console.error('Webhook handler failed:', err);
+    res.status(500).send('Webhook handler failed');
+  }
 });
 
 app.get('/api/key', (req, res) => {
