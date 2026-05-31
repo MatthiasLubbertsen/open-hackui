@@ -7,46 +7,56 @@ dotenv.config({ debug: false });
 const app = express();
 const port = 1826;
 const adminApiKey = process.env.ADMIN_API_KEY;
+let oldSettings = null;
 
 app.use(express.json());
 
-app.post('/webhook', (req, res) => {
-  console.log('Received webhook:', req.body);
-  res.status(200).send('Webhook received');
+async function getApiKey(userId) {
+  try {
+    const resp = await fetch(`https://webhooker.matthiaz.dev/api/key`);
+    if (!resp.ok) throw new Error(`Status ${resp.status}`);
+    const body = await resp.json();
+    return body.apiKey;
+  } catch (err) {
+    throw err;
+  }
+}
 
-  fetch('https://webhooker.matthiaz.dev/api/key')
-    .then(res => res.json())
-    .then(data => {
-      const apiKey = data.apiKey;
-      console.log('Generated API Key:', apiKey);
-    })
-    .catch(err => {
-      console.error('Error fetching API key:', err);
-    })
-
-    fetch('https://chat.matthiaz.dev/api/v1/users/user/settings', {
+async function getOldSettings(userId) {
+  try {
+    const resp = await fetch(`https://chat.matthiaz.dev/api/v1/users/user/settings`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${adminApiKey}`
       }
-    }).then(res => res.json())
-      .then(data => {
-        console.log('User settings:', data.ui.directConnections); // data.ui.directConnections
-        const oldSettings = data;
-      })
-      .catch(err => {
-        console.error('Error fetching user settings:', err);
-      });
+    });
+    if (!resp.ok) throw new Error(`Status ${resp.status}`);
+    const body = await resp.json();
+    return body;
+  } catch (err) {
+    throw err;
+  }
+}
 
-    // fetch('https://chat.matthiaz.dev/api/v1/users/user/settings/update', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': `Bearer ${adminApiKey}`
-    //   },
-    //   body: JSON.stringify(req.body)
-    // });
+app.post('/webhook', async (req, res) => {
+  console.log('Received webhook:', req.body);
+  res.status(200).send('Webhook received');
+
+  let apiKey = await getApiKey('user');
+  console.log('Fetched API key:', apiKey);
+  let oldSettings = await getOldSettings('user');
+  console.log('Fetched old settings:', oldSettings);
+
+
+  // fetch('https://chat.matthiaz.dev/api/v1/users/user/settings/update', {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //     'Authorization': `Bearer ${adminApiKey}`
+  //   },
+  //   body: JSON.stringify(req.body)
+  // });
 });
 
 app.get('/api/key', (req, res) => {
