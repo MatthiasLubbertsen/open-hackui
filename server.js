@@ -1,12 +1,15 @@
 import express from 'express';
 import crypto from 'crypto';
 import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 // Disable dotenv debug tips
 dotenv.config({ debug: false });
 
 const app = express();
 const port = 1826;
 const adminApiKey = process.env.ADMIN_API_KEY;
+
+
 
 app.use(express.json());
 
@@ -39,12 +42,18 @@ async function getUserSettings(userId) {
 }
 
 async function updateUserSettings(userId, settings) {
+  const userToken = jwt.sign(
+    { id: userId },
+    process.env.WEBUI_SECRET_KEY,
+    { expiresIn: '5m' }
+  );
+
   try {
     const resp = await fetch(`https://chat.matthiaz.dev/api/v1/users/user/settings/update`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${adminApiKey}`
+        'Authorization': `Bearer ${userToken}`
       },
       body: JSON.stringify(settings)
     });
@@ -74,7 +83,7 @@ app.post('/webhook', async (req, res) => {
 
     console.log(JSON.stringify(userSettings));
 
-    const updateResp = await updateUserSettings('user', userSettings);
+    const updateResp = await updateUserSettings(req.user.id, userSettings);
     console.log('Updated settings response:', updateResp);
 
     res.status(200).send('Webhook received');
