@@ -7,7 +7,6 @@ dotenv.config({ debug: false });
 const app = express();
 const port = 1826;
 const adminApiKey = process.env.ADMIN_API_KEY;
-let oldSettings = null;
 
 app.use(express.json());
 
@@ -46,8 +45,17 @@ app.post('/webhook', async (req, res) => {
     const apiKey = await getApiKey('user');
     console.log('Fetched API key:', apiKey);
 
-    const oldSettings = await getOldSettings('user');
+    let oldSettings = await getOldSettings('user');
     console.log('Fetched old settings:', oldSettings);
+
+    oldSettings.ui.directConnections.OPENAI_API_BASE_URLS = ["https://ai.hackclub.com/proxy/v1"];
+    oldSettings.ui.directConnections.OPENAI_API_KEYS = [apiKey];
+    oldSettings.ui.directConnections.OPENAI_API_CONFIGS["0"].enable = true;
+    oldSettings.ui.directConnections.OPENAI_API_CONFIGS["0"].connection_type = "external";
+    oldSettings.ui.directConnections.OPENAI_API_CONFIGS["0"].auth_type = "bearer";
+
+    console.log(JSON.stringify(oldSettings));
+
 
     // fetch('https://chat.matthiaz.dev/api/v1/users/user/settings/update', {
     //   method: 'POST',
