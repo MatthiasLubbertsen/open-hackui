@@ -38,6 +38,24 @@ async function getUserSettings(userId) {
   }
 }
 
+async function updateUserSettings(userId, settings) {
+  try {
+    const resp = await fetch(`https://chat.matthiaz.dev/api/v1/users/user/settings/update`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${adminApiKey}`
+      },
+      body: JSON.stringify(settings)
+    });
+    if (!resp.ok) throw new Error(`Status ${resp.status}`);
+    const body = await resp.json();
+    return body;
+  } catch (err) {
+    throw err;
+  }
+}
+
 app.post('/webhook', async (req, res) => {
   console.log('Received webhook:', req.body);
 
@@ -56,14 +74,8 @@ app.post('/webhook', async (req, res) => {
 
     console.log(JSON.stringify(userSettings));
 
-    fetch('https://chat.matthiaz.dev/api/v1/users/user/settings/update', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${adminApiKey}`
-      },
-      body: userSettings
-    });
+    const updateResp = await updateUserSettings('user', userSettings);
+    console.log('Updated settings response:', updateResp);
 
     res.status(200).send('Webhook received');
   } catch (err) {
