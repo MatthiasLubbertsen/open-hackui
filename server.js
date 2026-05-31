@@ -63,7 +63,7 @@ app.post('/webhook', async (req, res) => {
 
   const user = JSON.parse(req.body.user);
   const userId = user.id;
-  
+
   const userToken = jwt.sign(
     { id: userId },
     process.env.WEBUI_SECRET_KEY,
@@ -80,11 +80,33 @@ app.post('/webhook', async (req, res) => {
     let userSettings = await getUserSettings(userId, userToken);
     console.log('Fetched old settings:', userSettings);
 
-    userSettings.ui.directConnections.OPENAI_API_BASE_URLS = ["https://ai.hackclub.com/proxy/v1"];
-    userSettings.ui.directConnections.OPENAI_API_KEYS = [apiKey];
-    userSettings.ui.directConnections.OPENAI_API_CONFIGS["0"].enable = true;
-    userSettings.ui.directConnections.OPENAI_API_CONFIGS["0"].connection_type = "external";
-    userSettings.ui.directConnections.OPENAI_API_CONFIGS["0"].auth_type = "bearer";
+    if (userSettings === null) {
+      userSettings = {
+        ui: {
+          directConnections: {
+            OPENAI_API_BASE_URLS: [
+              "https://ai.hackclub.com/proxy/v1"
+            ],
+            OPENAI_API_KEYS: [
+              apiKey
+            ],
+            OPENAI_API_CONFIGS: {
+              "0": {
+                enable: true,
+                connection_type: "external",
+                auth_type: "bearer"
+              }
+            }
+          }
+        }
+      };
+    } else {
+      userSettings.ui.directConnections.OPENAI_API_BASE_URLS = ["https://ai.hackclub.com/proxy/v1"];
+      userSettings.ui.directConnections.OPENAI_API_KEYS = [apiKey];
+      userSettings.ui.directConnections.OPENAI_API_CONFIGS["0"].enable = true;
+      userSettings.ui.directConnections.OPENAI_API_CONFIGS["0"].connection_type = "external";
+      userSettings.ui.directConnections.OPENAI_API_CONFIGS["0"].auth_type = "bearer";
+    }
 
     console.log(JSON.stringify(userSettings));
 
