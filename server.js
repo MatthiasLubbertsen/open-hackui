@@ -21,7 +21,7 @@ async function getApiKey(userId) {
   }
 }
 
-async function getOldSettings(userId) {
+async function getUserSettings(userId) {
   try {
     const resp = await fetch(`https://chat.matthiaz.dev/api/v1/users/user/settings`, {
       method: 'GET',
@@ -45,26 +45,25 @@ app.post('/webhook', async (req, res) => {
     const apiKey = await getApiKey('user');
     console.log('Fetched API key:', apiKey);
 
-    let oldSettings = await getOldSettings('user');
-    console.log('Fetched old settings:', oldSettings);
+    let userSettings = await getUserSettings('user');
+    console.log('Fetched old settings:', userSettings);
 
-    oldSettings.ui.directConnections.OPENAI_API_BASE_URLS = ["https://ai.hackclub.com/proxy/v1"];
-    oldSettings.ui.directConnections.OPENAI_API_KEYS = [apiKey];
-    oldSettings.ui.directConnections.OPENAI_API_CONFIGS["0"].enable = true;
-    oldSettings.ui.directConnections.OPENAI_API_CONFIGS["0"].connection_type = "external";
-    oldSettings.ui.directConnections.OPENAI_API_CONFIGS["0"].auth_type = "bearer";
+    userSettings.ui.directConnections.OPENAI_API_BASE_URLS = ["https://ai.hackclub.com/proxy/v1"];
+    userSettings.ui.directConnections.OPENAI_API_KEYS = [apiKey];
+    userSettings.ui.directConnections.OPENAI_API_CONFIGS["0"].enable = true;
+    userSettings.ui.directConnections.OPENAI_API_CONFIGS["0"].connection_type = "external";
+    userSettings.ui.directConnections.OPENAI_API_CONFIGS["0"].auth_type = "bearer";
 
-    console.log(JSON.stringify(oldSettings));
+    console.log(JSON.stringify(userSettings));
 
-
-    // fetch('https://chat.matthiaz.dev/api/v1/users/user/settings/update', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     'Authorization': `Bearer ${adminApiKey}`
-    //   },
-    //   body: JSON.stringify(req.body)
-    // });
+    fetch('https://chat.matthiaz.dev/api/v1/users/user/settings/update', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${adminApiKey}`
+      },
+      body: userSettings
+    });
 
     res.status(200).send('Webhook received');
   } catch (err) {
