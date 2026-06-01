@@ -14,7 +14,7 @@ app.use(express.json());
 
 async function getApiKey(userId) {
   try {
-    const resp = await fetch(`https://webhooker.matthiaz.dev/api/key`);
+    const resp = await fetch(`https://inserther.matthiaz.dev/api/key`);
     if (!resp.ok) throw new Error(`Status ${resp.status}`);
     const body = await resp.json();
     return body.apiKey;
