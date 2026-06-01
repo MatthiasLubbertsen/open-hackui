@@ -85,7 +85,7 @@ app.post('/webhook', async (req, res) => {
         ui: {
           directConnections: {
             OPENAI_API_BASE_URLS: [
-              "https://ai.hackclub.com/proxy/v1"
+              "https://proxy.chat.matthiaz.dev/proxy/v1"
             ],
             OPENAI_API_KEYS: [
               apiKey
@@ -101,7 +101,7 @@ app.post('/webhook', async (req, res) => {
         }
       };
     } else {
-      userSettings.ui.directConnections.OPENAI_API_BASE_URLS = ["https://ai.hackclub.com/proxy/v1"];
+      userSettings.ui.directConnections.OPENAI_API_BASE_URLS = ["https://proxy.chat.matthiaz.dev/proxy/v1"];
       userSettings.ui.directConnections.OPENAI_API_KEYS = [apiKey];
       userSettings.ui.directConnections.OPENAI_API_CONFIGS["0"].enable = true;
       userSettings.ui.directConnections.OPENAI_API_CONFIGS["0"].connection_type = "external";
