@@ -1,2 +1,3 @@
-/node_modules
+/inzerther/node_modules
+/inzerther/.env
 .env

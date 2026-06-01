@@ -1,0 +1,11 @@
+FROM nodejs:18-alpine
+
+WORKDIR /inzerther
+
+COPY . .
+
+RUN npm install
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]
