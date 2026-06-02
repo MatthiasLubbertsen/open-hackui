@@ -20,8 +20,6 @@ services:
     build:
       context: ./inserther
       dockerfile: DOCKERFILE
-    ports:
-      - "9192:1826"
     restart: unless-stopped
     volumes:
       - ./inserther/.env:/app/.env:ro
