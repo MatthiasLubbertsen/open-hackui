@@ -6,8 +6,7 @@ import jwt from 'jsonwebtoken';
 dotenv.config({ debug: false });
 
 const app = express();
-const port = 1826;
-const adminApiKey = process.env.ADMIN_API_KEY;
+const port = process.env.PORT || 1826;
 
 
 app.use(express.json());
@@ -64,6 +63,11 @@ app.post('/webhook', async (req, res) => {
   const user = JSON.parse(req.body.user);
   const userId = user.id;
 
+  if (!process.env.WEBUI_SECRET_KEY) {
+    console.error('WEBUI_SECRET_KEY is not set in environment variables');
+    return res.status(500).send('Server configuration error');
+  }
+
   const userToken = jwt.sign(
     { id: userId },
     process.env.WEBUI_SECRET_KEY,
@@ -75,12 +79,12 @@ app.post('/webhook', async (req, res) => {
 
   try {
     const apiKey = await getApiKey(userId);
-    console.log('Fetched API key:', apiKey);
+    // console.log('Fetched API key:', apiKey);
 
     let userSettings = await getUserSettings(userId, userToken);
-    console.log('Fetched old settings:', userSettings);
+    // console.log('Fetched old settings:', userSettings);
 
-    if (userSettings === null) {
+    if (userSettings === null) { // this is the default if its a new account
       userSettings = {
         ui: {
           directConnections: {
