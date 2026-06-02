@@ -13,10 +13,20 @@ app.use(express.json());
 
 async function getApiKey(userId) {
   try {
-    const resp = await fetch(`https://inserther.matthiaz.dev/api/key`);
-    if (!resp.ok) throw new Error(`Status ${resp.status}`);
-    const body = await resp.json();
-    return body.apiKey;
+    // const resp = await fetch(`https://inserther.matthiaz.dev/api/key`);
+    // if (!resp.ok) throw new Error(`Status ${resp.status}`);
+    // const body = await resp.json();
+    // return body.apiKey;
+    const amsterdamTime = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Amsterdam',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).format(new Date());
+  const randomPart = crypto.randomUUID().replace(/-/g, '').slice(0, 24);
+  const apiKey = `sk_${amsterdamTime}_${randomPart}`;
+  return apiKey;
   } catch (err) {
     throw err;
   }
