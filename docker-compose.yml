@@ -6,7 +6,7 @@ services:
     restart: unless-stopped
     volumes:
       - open-webui:/app/backend/data
-      - ../.env:/app/backend/.env:ro
+      - ./.env:/app/backend/.env:ro
 
   nginx-cors-proxy:
     image: nginx:alpine
