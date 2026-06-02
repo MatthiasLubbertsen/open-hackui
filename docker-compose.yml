@@ -22,7 +22,7 @@ services:
       dockerfile: DOCKERFILE
     restart: unless-stopped
     volumes:
-      - ./inserther/.env:/app/.env:ro
+      - ./.env:/app/.env:ro
 
 volumes:
   open-webui:
