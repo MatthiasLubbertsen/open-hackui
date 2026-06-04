@@ -8,7 +8,6 @@ dotenv.config({ debug: false });
 const app = express();
 const port = process.env.PORT || 1826;
 
-
 app.use(express.json());
 
 async function getApiKey(userId) {
