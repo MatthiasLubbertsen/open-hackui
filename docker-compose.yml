@@ -15,6 +15,7 @@ services:
       - "8281:80"
     volumes:
       - ./nginx-proxy.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./manifest.json:/usr/share/nginx/html/manifest.json:ro # json file for open webui pwa
     restart: unless-stopped
 
   inserther:
