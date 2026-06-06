@@ -8,6 +8,8 @@ services:
       - ./.env
     volumes:
       - open-webui:/app/backend/data
+    networks:
+      - internal
 
   nginx-cors-proxy:
     image: nginx:alpine
@@ -15,8 +17,10 @@ services:
       - "8281:80"
     volumes:
       - ./nginx-proxy.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./manifest.json:/usr/share/nginx/html/manifest.json:ro # json file for open webui pwa
+      - ./manifest.json:/usr/share/nginx/html/manifest.json:ro
     restart: unless-stopped
+    networks:
+      - internal
 
   inserther:
     build:
@@ -25,6 +29,16 @@ services:
     restart: unless-stopped
     volumes:
       - ./.env:/app/.env:ro
+    networks:
+      internal:
+        ipv4_address: 10.99.0.10
+
+networks:
+  internal:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 10.99.0.0/24
 
 volumes:
   open-webui:
