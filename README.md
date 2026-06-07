@@ -30,3 +30,4 @@ TODO:
 - [x] webmanifest
 - [ ] init
 - [ ] vars to fill in .env - dont forget url
+- [ ] add `PROXY_URL` to `inserther/server.js`
