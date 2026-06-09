@@ -10,6 +10,9 @@ services:
       - open-webui:/app/backend/data
     networks:
       - internal
+    environment:
+      PROXY_URL: ${PROXY_URL}
+      EXTERNAL_PWA_MANIFEST_URL: https://${PROXY_URL}/backend/manifest.json
 
   nginx-cors-proxy:
     image: nginx:alpine
