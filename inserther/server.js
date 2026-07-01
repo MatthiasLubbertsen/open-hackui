@@ -10,22 +10,52 @@ const port = process.env.PORT || 1826;
 
 app.use(express.json());
 
-async function getApiKey(userId) {
+async function getApiKey(user) {
+  try {
+    const resp = await fetch(`https://auth.hackclub.com/api/v1/me`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${user.token}`
+      }
+    });
+    if (!resp.ok) throw new Error(`Status ${resp.status}`);
+    const body = await resp.json();
+    const slackId = body.identity.slack_id;
+
+    const resp2 = await fetch(`https://ai.hackclub.com/internal/keys`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ slackId: slackId, name: 'Open HackUI' })
+    });
+
+    if (!resp2.ok) throw new Error(`Status ${resp2.status}`);
+    const body2 = await resp2.json();
+    return body2;
+  } catch (err) {
+    throw err;
+  }
+}
+
+async function getDummyApiKey(user) {
   try {
     // const resp = await fetch(`https://inserther.matthiaz.dev/api/key`);
     // if (!resp.ok) throw new Error(`Status ${resp.status}`);
     // const body = await resp.json();
     // return body.apiKey;
+    console.log('user:', user);
     const amsterdamTime = new Intl.DateTimeFormat('en-GB', {
-    timeZone: 'Europe/Amsterdam',
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-    hour12: false,
-  }).format(new Date());
-  const randomPart = crypto.randomUUID().replace(/-/g, '').slice(0, 24);
-  const apiKey = `sk_${amsterdamTime}_${randomPart}`;
-  return apiKey;
+      timeZone: 'Europe/Amsterdam',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false,
+    }).format(new Date());
+    const randomPart = crypto.randomUUID().replace(/-/g, '').slice(0, 24);
+    const apiKey = `sk_${amsterdamTime}_${randomPart}`;
+    return apiKey;
   } catch (err) {
     throw err;
   }
@@ -91,9 +121,8 @@ app.post('/webhook', async (req, res) => {
 
   console.log('jwt token:', userToken);
 
-
   try {
-    const apiKey = await getApiKey(userId);
+    const apiKey = await getDummyApiKey(user);
     // console.log('Fetched API key:', apiKey);
 
     let userSettings = await getUserSettings(userId, userToken);
@@ -113,7 +142,13 @@ app.post('/webhook', async (req, res) => {
               "0": {
                 enable: true,
                 connection_type: "external",
-                auth_type: "bearer"
+                auth_type: "bearer",
+                prefix_id: "",
+                model_ids: [
+                  "xiaomi/mimo-v2.5",
+                  "qwen/qwen3.6-flash",
+                  ""
+                ]
               }
             }
           }
