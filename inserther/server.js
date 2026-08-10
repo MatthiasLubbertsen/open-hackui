@@ -124,7 +124,7 @@ app.post('/webhook', async (req, res) => {
   console.log('jwt token:', userToken);
 
   try {
-    const apiKey = await getDummyApiKey(user);
+    const apiKey = await getDummyApiKey(userId);
     // console.log('Fetched API key:', apiKey);
 
     let userSettings = await getUserSettings(userId, userToken);
