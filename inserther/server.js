@@ -191,5 +191,5 @@ app.get('/api/key', (req, res) => {
 })
 
 app.listen(port, () => {
-  console.log(`Webhook server listening on port ${port}`);
+  console.log(`Webhook server listening on port: ${port}`);
 });
