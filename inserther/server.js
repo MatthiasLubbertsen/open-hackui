@@ -104,14 +104,11 @@ async function updateUserSettings(userId, settings, userToken) {
 app.post('/webhook', async (req, res) => {
   console.log('Received webhook:', req.body);
 
-  if (!req.body || req.body.user === undefined) {
+  const userId = req.body?.subject?.id;
+  
+  if (userId === undefined) {
     return res.status(400).send('Missing user in request body');
   }
-
-  const user = typeof req.body.user === 'string'
-    ? JSON.parse(req.body.user)
-    : req.body.user;
-  const userId = user.id;
 
   if (!process.env.WEBUI_SECRET_KEY) {
     console.error('WEBUI_SECRET_KEY is not set in environment variables');
